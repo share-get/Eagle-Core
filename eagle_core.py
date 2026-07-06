@@ -102,6 +102,8 @@ def download_market_data(
         ]
     ].copy()
 
+    data.columns.name = None
+
     data.index.name = "Date"
 
     _validate(data)
