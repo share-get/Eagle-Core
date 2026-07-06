@@ -7,7 +7,7 @@ python demo.py
 
 from eagle_core import download_market_data
 from backtest import buy_and_hold
-
+from metrics import calculate_metrics
 
 def main():
 
@@ -44,6 +44,7 @@ def main():
     # ==========================
 
     result = buy_and_hold(spy)
+    metrics = calculate_metrics(result.equity)
 
     print("\n")
     print("=" * 60)
