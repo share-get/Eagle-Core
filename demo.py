@@ -9,7 +9,7 @@ from eagle_core import download_market_data
 from backtest import buy_and_hold
 from metrics import calculate_metrics
 from plotting import plot_equity_curve
-
+from reports import save_metrics, save_summary
 
 def main():
 
@@ -48,6 +48,13 @@ def main():
     result = buy_and_hold(spy)
     metrics = calculate_metrics(result.equity)
     chart = plot_equity_curve(result)
+    metrics_file = save_metrics(metrics)
+    summary_file = save_summary(metrics)
+
+    print()
+    print(f"Chart   : {chart}")
+    print(f"Metrics : {metrics_file}")
+    print(f"Summary : {summary_file}")
 
     print()
     print(f"Chart saved to: {chart}")
