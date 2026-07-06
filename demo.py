@@ -5,7 +5,7 @@ Run:
 
 python demo.py
 """
-
+from backtest import buy_and_hold
 from eagle_core import download_market_data
 
 
@@ -47,3 +47,14 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+result = buy_and_hold(spy)
+
+print("\n")
+print("=" * 60)
+print("BUY & HOLD BENCHMARK")
+print("=" * 60)
+
+print(f"Total Return : {result.total_return:.2%}")
+print(f"CAGR         : {result.cagr:.2%}")
+print(f"Max Drawdown : {result.max_drawdown:.2%}")
