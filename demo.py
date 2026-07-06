@@ -44,11 +44,11 @@ def main():
 
     print("\nDone.")
 
+result = buy_and_hold(spy)
 
 if __name__ == "__main__":
     main()
 
-result = buy_and_hold(spy)
 
 print("\n")
 print("=" * 60)
