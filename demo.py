@@ -51,9 +51,11 @@ def main():
     print("BUY & HOLD BENCHMARK")
     print("=" * 60)
 
-    print(f"Total Return : {result.total_return:.2%}")
-    print(f"CAGR         : {result.cagr:.2%}")
-    print(f"Max Drawdown : {result.max_drawdown:.2%}")
+    print(f"Total Return      : {metrics.total_return:.2%}")
+    print(f"CAGR              : {metrics.cagr:.2%}")
+    print(f"Annual Volatility : {metrics.annual_volatility:.2%}")
+    print(f"Sharpe Ratio      : {metrics.sharpe_ratio:.2f}")
+    print(f"Max Drawdown      : {metrics.max_drawdown:.2%}")
 
     print("\nDone.")
 
