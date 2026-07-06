@@ -8,6 +8,8 @@ python demo.py
 from eagle_core import download_market_data
 from backtest import buy_and_hold
 from metrics import calculate_metrics
+from plotting import plot_equity_curve
+
 
 def main():
 
@@ -45,6 +47,10 @@ def main():
 
     result = buy_and_hold(spy)
     metrics = calculate_metrics(result.equity)
+    chart = plot_equity_curve(result)
+
+    print()
+    print(f"Chart saved to: {chart}")
 
     print("\n")
     print("=" * 60)
