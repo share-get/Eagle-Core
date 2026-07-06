@@ -2,11 +2,11 @@
 Eagle EM1 Demo
 
 Run:
-
 python demo.py
 """
-from backtest import buy_and_hold
+
 from eagle_core import download_market_data
+from backtest import buy_and_hold
 
 
 def main():
@@ -29,32 +29,33 @@ def main():
     print(f"Columns: {list(spy.columns)}")
 
     print("\nFirst Five Rows:\n")
-
     print(spy.head())
 
     print("\nLast Five Rows:\n")
-
     print(spy.tail())
 
     print("\nSummary:\n")
-
     print(spy.describe())
 
     print("\nValidation Passed.")
 
+    # ==========================
+    # Buy & Hold Benchmark
+    # ==========================
+
+    result = buy_and_hold(spy)
+
+    print("\n")
+    print("=" * 60)
+    print("BUY & HOLD BENCHMARK")
+    print("=" * 60)
+
+    print(f"Total Return : {result.total_return:.2%}")
+    print(f"CAGR         : {result.cagr:.2%}")
+    print(f"Max Drawdown : {result.max_drawdown:.2%}")
+
     print("\nDone.")
 
-result = buy_and_hold(spy)
 
 if __name__ == "__main__":
     main()
-
-
-print("\n")
-print("=" * 60)
-print("BUY & HOLD BENCHMARK")
-print("=" * 60)
-
-print(f"Total Return : {result.total_return:.2%}")
-print(f"CAGR         : {result.cagr:.2%}")
-print(f"Max Drawdown : {result.max_drawdown:.2%}")
