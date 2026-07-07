@@ -51,9 +51,9 @@ def save_summary(metrics):
 
     with open(output, "w", encoding="utf-8") as f:
 
-        f.write("=" * 40 + "\n")
+        f.write("=" * 50 + "\n")
         f.write("Eagle Backtest Report\n")
-        f.write("=" * 40 + "\n\n")
+        f.write("=" * 50 + "\n\n")
 
         f.write(f"Total Return      : {metrics.total_return:.2%}\n")
         f.write(f"CAGR              : {metrics.cagr:.2%}\n")
