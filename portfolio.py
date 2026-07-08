@@ -1,18 +1,12 @@
 """
 Project Eagle
+
 Portfolio Engine v1
 
-Support multi-asset portfolio returns.
-
-Current Version:
+Supports:
+- Multiple assets
 - Static allocation
 - Daily rebalancing
-- Unlimited assets
-
-Future:
-- Cash
-- Transaction Cost
-- Rebalance Frequency
 """
 
 from __future__ import annotations
@@ -21,89 +15,61 @@ import pandas as pd
 
 
 class Portfolio:
-    """
-    Portfolio Engine
 
-    Parameters
-    ----------
-    prices : dict[str, pd.Series]
+    def __init__(self, weights: dict[str, float]):
 
-        Example
-
-        {
-            "VOO": voo_close,
-            "QQQM": qqqm_close,
-        }
-
-    weights : dict[str, float]
-
-        Example
-
-        {
-            "VOO": 0.7,
-            "QQQM": 0.3,
-        }
-    """
-
-    def __init__(self, prices, weights):
-
-        self.prices = prices
-        self.weights = weights
-
-        self._validate()
-
-    def _validate(self):
-
-        if len(self.prices) == 0:
-            raise ValueError("No assets supplied.")
-
-        if set(self.prices.keys()) != set(self.weights.keys()):
-            raise ValueError(
-                "Price assets and weight assets do not match."
-            )
-
-        total = sum(self.weights.values())
+        total = sum(weights.values())
 
         if abs(total - 1.0) > 1e-8:
-            raise ValueError(
-                "Portfolio weights must sum to 1."
-            )
+            raise ValueError("Portfolio weights must sum to 1.0")
 
-    def price_frame(self):
+        self.weights = weights
 
-        frame = pd.DataFrame(self.prices)
+    def build(self, prices: dict[str, pd.Series]) -> pd.DataFrame:
+        """
+        Build aligned price DataFrame.
+        """
+
+        missing = set(self.weights) - set(prices)
+
+        if missing:
+            raise ValueError(f"Missing price series: {missing}")
+
+        frame = pd.concat(prices, axis=1)
 
         frame = frame.dropna()
 
         return frame
 
-    def return_frame(self):
+    def daily_returns(
+        self,
+        prices: dict[str, pd.Series],
+    ) -> pd.Series:
 
-        returns = self.price_frame().pct_change()
+        frame = self.build(prices)
 
-        returns = returns.fillna(0)
+        returns = frame.pct_change().fillna(0)
 
-        return returns
+        weights = pd.Series(self.weights)
 
-    def portfolio_return(self):
+        portfolio_return = returns.mul(weights, axis=1).sum(axis=1)
 
-        returns = self.return_frame()
+        portfolio_return.name = "Portfolio"
 
-        w = pd.Series(self.weights)
-
-        portfolio = returns.mul(w, axis=1).sum(axis=1)
-
-        return portfolio
+        return portfolio_return
 
     def equity_curve(
         self,
-        initial_value=1.0,
-    ):
+        prices: dict[str, pd.Series],
+        initial_value: float = 1.0,
+    ) -> pd.Series:
 
-        r = self.portfolio_return()
+        r = self.daily_returns(prices)
 
         equity = (1 + r).cumprod()
 
         equity *= initial_value
+
+        equity.name = "Equity"
 
         return equity
