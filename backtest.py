@@ -1,79 +1,105 @@
 """
-backtest.py
+Project Eagle
 
-Benchmark Engine (EM1)
-
-Current:
-
-- Buy & Hold
+Backtest Engine
 """
 
 from dataclasses import dataclass
-
+import numpy as np
 import pandas as pd
+
+from portfolio import Portfolio
 
 
 @dataclass
 class BacktestResult:
-    equity: pd.DataFrame
+
+    equity: pd.Series
+
+    returns: pd.Series
+
     total_return: float
+
     cagr: float
+
+    volatility: float
+
+    sharpe: float
+
     max_drawdown: float
 
 
-def buy_and_hold(df: pd.DataFrame) -> BacktestResult:
-    """
-    Buy on the first trading day and hold.
-    """
+def _calculate_metrics(
+    equity: pd.Series,
+    returns: pd.Series,
+) -> BacktestResult:
 
-    equity = pd.DataFrame(index=df.index)
+    total_return = equity.iloc[-1] / equity.iloc[0] - 1
 
-    equity["Close"] = df["Close"]
+    years = len(equity) / 252
 
-    equity["Return"] = (
-        equity["Close"]
-        .pct_change()
-        .fillna(0)
-    )
+    cagr = (equity.iloc[-1] / equity.iloc[0]) ** (1 / years) - 1
 
-    equity["Equity"] = (
-        1 + equity["Return"]
-    ).cumprod()
+    volatility = returns.std() * np.sqrt(252)
 
-    equity["Peak"] = (
-        equity["Equity"]
-        .cummax()
-    )
+    if volatility == 0:
+        sharpe = 0
+    else:
+        sharpe = cagr / volatility
 
-    equity["Drawdown"] = (
-        equity["Equity"]
-        / equity["Peak"]
-        - 1
-    )
+    running_max = equity.cummax()
 
-    total_return = (
-        equity["Equity"].iloc[-1]
-        - 1
-    )
+    drawdown = equity / running_max - 1
 
-    years = (
-        (df.index[-1] - df.index[0]).days
-        / 365.25
-    )
-
-    cagr = (
-        equity["Equity"].iloc[-1]
-        ** (1 / years)
-        - 1
-    )
-
-    max_drawdown = (
-        equity["Drawdown"].min()
-    )
+    max_drawdown = drawdown.min()
 
     return BacktestResult(
         equity=equity,
-        total_return=float(total_return),
-        cagr=float(cagr),
-        max_drawdown=float(max_drawdown),
+        returns=returns,
+        total_return=total_return,
+        cagr=cagr,
+        volatility=volatility,
+        sharpe=sharpe,
+        max_drawdown=max_drawdown,
+    )
+
+
+def buy_and_hold(price: pd.DataFrame) -> BacktestResult:
+    """
+    Legacy API
+
+    Keep compatibility with current project.
+    """
+
+    prices = {
+        "SPY": price["Close"]
+    }
+
+    weights = {
+        "SPY": 1.0
+    }
+
+    return portfolio_backtest(
+        prices,
+        weights,
+    )
+
+
+def portfolio_backtest(
+    prices: dict,
+    weights: dict,
+) -> BacktestResult:
+    """
+    Multi Asset Backtest
+    """
+
+    portfolio = Portfolio(weights)
+
+    returns = portfolio.daily_returns(prices)
+
+    equity = portfolio.equity_curve(prices)
+
+    return _calculate_metrics(
+        equity,
+        returns,
     )
