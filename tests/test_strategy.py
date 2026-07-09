@@ -3,11 +3,9 @@ Project Eagle
 
 Unit Tests for Eagle Strategy
 """
+from eagle.strategy import EagleStrategy
+from eagle.allocation import Allocation
 
-
-
-from allocation import Allocation
-from strategy import EagleStrategy
 
 
 def test_default_strategy():
