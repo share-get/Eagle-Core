@@ -4,9 +4,11 @@ Project Eagle
 Main Entry
 """
 
-from eagle_core import download_market_data
-from backtest import portfolio_backtest
-from reports import generate_reports
+from eagle.eagle_core import download_market_data
+from eagle.backtest import portfolio_backtest
+from eagle.reports import generate_reports
+from eagle.strategy import EagleStrategy
+from eagle.allocation import Allocation
 
 
 def main():
