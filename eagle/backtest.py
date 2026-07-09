@@ -8,7 +8,7 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-from portfolio import Portfolio
+from eagle.portfolio import Portfolio
 
 
 @dataclass
