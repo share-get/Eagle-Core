@@ -4,7 +4,7 @@ Project Eagle
 Eagle Allocation Strategy v1
 """
 
-from allocation import Allocation
+from eagle.allocation import Allocation
 
 
 class EagleStrategy:
