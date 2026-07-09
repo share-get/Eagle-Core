@@ -9,7 +9,7 @@ Supports:
 - Daily rebalancing
 """
 
-from eagle.__future__ import annotations
+from __future__ import annotations
 
 import pandas as pd
 
